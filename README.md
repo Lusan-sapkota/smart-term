@@ -1,5 +1,7 @@
 # Smart-term
 
+> Smart-term? Yeah, the name sounded weird to me too, but here we are.
+
 > The little brother of [Smart-Shell](https://github.com/Lusan-sapkota/smart-shell) - because my Perplexity API subscription was gathering dust and I was bored.
 
 An AI-powered terminal assistant that actually works. Ask questions, analyze files, get instant answers - all from your command line.
