@@ -99,8 +99,8 @@ main() {
     git log --oneline HEAD..origin/main
     echo ""
     
-    # Ask for confirmation
-    read -p "Do you want to update? (y/n): " -n 1 -r
+    # Ask for confirmation (redirect from /dev/tty to handle piped input)
+    read -p "Do you want to update? (y/n): " -n 1 -r </dev/tty
     echo
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
         print_warning "Update cancelled"
