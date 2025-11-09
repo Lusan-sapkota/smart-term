@@ -34,14 +34,24 @@ class OutputFormatter:
         
         self.console.print()  # Add spacing
     
-    def display_response(self, response: str, model: str):
+    def display_response(self, response: str, model: str, show_sources: bool = True):
         """
         Render the AI response with markdown formatting in a Rich Panel.
         
         Args:
             response: The AI model's response text (may include citations)
             model: The name of the model that generated the response
+            show_sources: Whether to display source citations
         """
+        # Model name color mapping for visual distinction
+        model_colors = {
+            'sonar': 'cyan',
+            'sonar-pro': 'magenta',
+            'sonar-reasoning-pro': 'yellow',
+            'sonar-deep-research': 'blue'
+        }
+        model_color = model_colors.get(model, 'green')
+        
         # Check if response contains citations
         if "__CITATIONS__" in response:
             main_response, citations_section = response.split("__CITATIONS__", 1)
@@ -50,32 +60,83 @@ class OutputFormatter:
             md = Markdown(main_response.strip())
             panel = Panel(
                 md,
-                title=f"[bold green]Response from {model}[/bold green]",
-                border_style="green",
+                title=f"[bold {model_color}]Response from {model}[/bold {model_color}]",
+                border_style=model_color,
                 padding=(1, 2)
             )
             self.console.print(panel)
             
-            # Display citations in a separate panel
-            citations_panel = Panel(
-                citations_section.strip(),
-                title="[bold cyan]📚 Sources[/bold cyan]",
-                border_style="cyan",
-                padding=(1, 2)
-            )
-            self.console.print(citations_panel)
+            # Display citations only if show_sources is True
+            if show_sources:
+                # Truncate long URLs in citations
+                truncated_citations = self._truncate_urls(citations_section.strip())
+                
+                citations_panel = Panel(
+                    truncated_citations,
+                    title="[bold cyan]📚 Sources[/bold cyan]",
+                    border_style="cyan",
+                    padding=(1, 2)
+                )
+                self.console.print(citations_panel)
             self.console.print()
         else:
             # No citations, display normally
             md = Markdown(response)
             panel = Panel(
                 md,
-                title=f"[bold green]Response from {model}[/bold green]",
-                border_style="green",
+                title=f"[bold {model_color}]Response from {model}[/bold {model_color}]",
+                border_style=model_color,
                 padding=(1, 2)
             )
             self.console.print(panel)
             self.console.print()  # Add spacing after response
+    
+    def _truncate_urls(self, citations: str) -> str:
+        """
+        Truncate long URLs in citations to show only domain and path.
+        
+        Args:
+            citations: Raw citations text with URLs
+        
+        Returns:
+            Citations with truncated URLs
+        """
+        import re
+        from urllib.parse import urlparse
+        
+        lines = citations.split('\n')
+        truncated_lines = []
+        
+        for line in lines:
+            # Match pattern like "[1] https://..."
+            match = re.match(r'(\[\d+\])\s+(https?://[^\s]+)', line)
+            if match:
+                number, url = match.groups()
+                try:
+                    parsed = urlparse(url)
+                    # Get domain without www
+                    domain = parsed.netloc.replace('www.', '')
+                    # Get first part of path (if exists)
+                    path = parsed.path.split('/')[1] if len(parsed.path.split('/')) > 1 else ''
+                    
+                    # Create shortened display
+                    if path:
+                        short_url = f"{domain}/{path}"
+                    else:
+                        short_url = domain
+                    
+                    # Limit total length
+                    if len(short_url) > 50:
+                        short_url = short_url[:47] + "..."
+                    
+                    truncated_lines.append(f"{number} {short_url}")
+                except:
+                    # If parsing fails, use original
+                    truncated_lines.append(line)
+            else:
+                truncated_lines.append(line)
+        
+        return '\n'.join(truncated_lines)
     
     def display_error(self, error: Exception):
         """

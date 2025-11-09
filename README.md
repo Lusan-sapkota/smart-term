@@ -85,12 +85,19 @@ ai What is quantum computing --deep # sonar-deep-research
 ai "Quick question" --s            # sonar (default, fast)
 ai Solve this problem --r          # sonar-reasoning-pro
 
+# Hide source citations
+ai "Quick query" --no-sources      # Clean output without sources
+ai "Research topic" --deep --no-sources
+
 # Special commands
 ai --bored                         # Better try it yourself
 ai --update                        # Update to latest version
 ```
 
-**Pro tip:** Quotes are only needed if your query has special shell characters. Otherwise, just type naturally!
+**Pro tips:** 
+- Quotes are only needed if your query has special shell characters. Otherwise, just type naturally!
+- Use `--no-sources` to hide citations for cleaner output or when piping to other commands
+- Model names are color-coded: sonar (cyan), sonar-pro (magenta), sonar-reasoning-pro (yellow), sonar-deep-research (blue)
 
 ## Features
 

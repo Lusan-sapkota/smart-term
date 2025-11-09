@@ -46,6 +46,9 @@ class ArgumentParser:
         # Extract model flag
         model, remaining_args = self.extract_model_flag(remaining_args)
         
+        # Extract --no-sources flag
+        show_sources, remaining_args = self.extract_sources_flag(remaining_args)
+        
         # Build query from remaining arguments
         query = self.build_query(remaining_args)
         
@@ -54,6 +57,7 @@ class ArgumentParser:
             file_path=file_path,
             model=model if model else self.default_model,
             provider=self.default_provider,
+            show_sources=show_sources,
             flags={}
         )
     
@@ -113,6 +117,26 @@ class ArgumentParser:
                   f"Using the last one: {found_flags[-1]}", file=sys.stderr)
         
         return model, remaining_args
+    
+    def extract_sources_flag(self, args: list[str]) -> tuple[bool, list[str]]:
+        """Extract --no-sources flag from arguments.
+        
+        Args:
+            args: List of command-line arguments
+        
+        Returns:
+            Tuple of (show_sources boolean, remaining_args without flag)
+        """
+        show_sources = True  # Default: show sources
+        remaining_args = []
+        
+        for arg in args:
+            if arg == '--no-sources':
+                show_sources = False
+            else:
+                remaining_args.append(arg)
+        
+        return show_sources, remaining_args
     
     def build_query(self, args: list[str]) -> str:
         """Build query string from remaining arguments.

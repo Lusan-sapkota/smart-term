@@ -166,7 +166,7 @@ def execute_query(args: list[str]) -> int:
         
         # Display response
         if response:
-            formatter.display_response(response, parsed_args.model)
+            formatter.display_response(response, parsed_args.model, parsed_args.show_sources)
         else:
             formatter.display_error(Exception("No response received from AI provider"))
             return 5
@@ -253,17 +253,20 @@ def main() -> int:
         # Check if no arguments provided
         if not args:
             print("Smart-term AI CLI Tool")
-            print("\nUsage: ai [file_path] <query> [--s|--p|--r|--deep]")
+            print("\nUsage: ai [file_path] <query> [--s|--p|--r|--deep] [--no-sources]")
             print("\nModel flags:")
             print("  --s      Use sonar model (default)")
             print("  --p      Use sonar-pro model")
             print("  --r      Use sonar-reasoning-pro model")
             print("  --deep   Use sonar-deep-research model")
+            print("\nOptions:")
+            print("  --no-sources   Hide source citations")
             print("\nExamples:")
             print("  ai 'What is the capital of France?'")
             print("  ai document.pdf 'Summarize this document' --p")
             print("  ai ~/code/script.py 'Explain this code' --r")
             print("  ai image.png 'What is in this image?'")
+            print("  ai 'Quick query' --s --no-sources")
             print("\nSpecial commands:")
             print("  ai --bored    When you need a break")
             print("  ai --update   Update to the latest version")

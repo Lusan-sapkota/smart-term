@@ -142,6 +142,10 @@ class PerplexityProvider(AIProvider):
             if 'choices' in data and len(data['choices']) > 0:
                 content = data['choices'][0]['message']['content']
                 
+                # Remove citation numbers from the main text [1][2][3] etc.
+                import re
+                content = re.sub(r'\[\d+\]', '', content)
+                
                 # Check if citations are available
                 citations = data.get('citations', [])
                 
