@@ -4,6 +4,8 @@ from rich.console import Console
 from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.text import Text
+from rich.rule import Rule
+from rich.syntax import Syntax
 from colorama import Fore, Style, init
 
 
@@ -80,56 +82,50 @@ class OutputFormatter:
             else:
                 main_response, citations_section = response.split("__CITATIONS__", 1)
             
-            # Display main response with proper wrapping
+            # Display header with horizontal rule
+            self.console.print()
+            self.console.print(
+                Rule(f"[bold {model_color}]Response from {model}[/bold {model_color}]", 
+                     style=model_color)
+            )
+            self.console.print()
+            
+            # Display main response with markdown
             md = Markdown(
                 main_response.strip(), 
                 code_theme="monokai", 
-                inline_code_theme="monokai",
-                justify="left"
+                inline_code_theme="monokai"
             )
-            panel = Panel(
-                md,
-                title=f"[bold {model_color}]Response from {model}[/bold {model_color}]",
-                border_style=model_color,
-                padding=(1, 2),
-                expand=True,  # Expand to fill width
-                width=terminal_width  # Use full terminal width
-            )
-            self.console.print(panel)
+            self.console.print(md)
+            self.console.print()
             
             # Display citations only if show_sources is True
             if show_sources:
+                self.console.print(
+                    Rule("[bold cyan]Sources[/bold cyan]", style="cyan")
+                )
+                self.console.print()
+                
                 # Make URLs clickable with truncated display
                 clickable_citations = self._make_urls_clickable(citations_section.strip())
-                
-                citations_panel = Panel(
-                    clickable_citations,
-                    title="[bold cyan]📚 Sources[/bold cyan]",
-                    border_style="cyan",
-                    padding=(1, 2),
-                    expand=True,
-                    width=terminal_width
-                )
-                self.console.print(citations_panel)
-            self.console.print()
+                self.console.print(clickable_citations)
+                self.console.print()
         else:
             # No citations, display normally
+            self.console.print()
+            self.console.print(
+                Rule(f"[bold {model_color}]Response from {model}[/bold {model_color}]", 
+                     style=model_color)
+            )
+            self.console.print()
+            
             md = Markdown(
                 response, 
                 code_theme="monokai", 
-                inline_code_theme="monokai",
-                justify="left"
+                inline_code_theme="monokai"
             )
-            panel = Panel(
-                md,
-                title=f"[bold {model_color}]Response from {model}[/bold {model_color}]",
-                border_style=model_color,
-                padding=(1, 2),
-                expand=True,
-                width=terminal_width
-            )
-            self.console.print(panel)
-            self.console.print()  # Add spacing after response
+            self.console.print(md)
+            self.console.print()
     
     def _make_urls_clickable(self, citations: str) -> Text:
         """
