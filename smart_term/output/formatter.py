@@ -14,7 +14,9 @@ class OutputFormatter:
         """Initialize the output formatter with Rich Console and Colorama."""
         self.console = Console(
             soft_wrap=True,  # Enable soft wrapping for better text flow
-            legacy_windows=False  # Better Windows terminal support
+            legacy_windows=False,  # Better Windows terminal support
+            force_terminal=True,  # Force terminal mode
+            force_interactive=False  # Disable interactive features that might cause issues
         )
         init(autoreset=True)  # Initialize Colorama with auto-reset
     
@@ -56,6 +58,11 @@ class OutputFormatter:
         }
         model_color = model_colors.get(model, 'green')
         
+        # Get terminal width for proper sizing
+        terminal_width = self.console.width
+        # Reserve space for panel borders and padding (4 chars on each side)
+        content_width = max(40, terminal_width - 8)
+        
         # Check if response contains citations
         if "__CITATIONS__" in response:
             # Check if we have both versions
@@ -74,14 +81,19 @@ class OutputFormatter:
                 main_response, citations_section = response.split("__CITATIONS__", 1)
             
             # Display main response with proper wrapping
-            md = Markdown(main_response.strip(), code_theme="monokai", inline_code_theme="monokai")
+            md = Markdown(
+                main_response.strip(), 
+                code_theme="monokai", 
+                inline_code_theme="monokai",
+                justify="left"
+            )
             panel = Panel(
                 md,
                 title=f"[bold {model_color}]Response from {model}[/bold {model_color}]",
                 border_style=model_color,
                 padding=(1, 2),
-                expand=False,
-                width=None  # Auto-adjust to terminal width
+                expand=True,  # Expand to fill width
+                width=terminal_width  # Use full terminal width
             )
             self.console.print(panel)
             
@@ -95,21 +107,26 @@ class OutputFormatter:
                     title="[bold cyan]📚 Sources[/bold cyan]",
                     border_style="cyan",
                     padding=(1, 2),
-                    expand=False,
-                    width=None
+                    expand=True,
+                    width=terminal_width
                 )
                 self.console.print(citations_panel)
             self.console.print()
         else:
             # No citations, display normally
-            md = Markdown(response, code_theme="monokai", inline_code_theme="monokai")
+            md = Markdown(
+                response, 
+                code_theme="monokai", 
+                inline_code_theme="monokai",
+                justify="left"
+            )
             panel = Panel(
                 md,
                 title=f"[bold {model_color}]Response from {model}[/bold {model_color}]",
                 border_style=model_color,
                 padding=(1, 2),
-                expand=False,
-                width=None
+                expand=True,
+                width=terminal_width
             )
             self.console.print(panel)
             self.console.print()  # Add spacing after response
