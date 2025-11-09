@@ -13,13 +13,16 @@ class ArgumentParser:
     Handles file path detection, model flag extraction, and query building.
     """
     
-    # Model flag mappings
+    # Model flag mappings (case-insensitive)
     MODEL_FLAGS = {
         '--s': 'sonar',
         '--p': 'sonar-pro',
         '--r': 'sonar-reasoning-pro',
         '--deep': 'sonar-deep-research'
     }
+    
+    # Valid model names for validation
+    VALID_MODELS = ['sonar', 'sonar-pro', 'sonar-reasoning-pro', 'sonar-deep-research']
     
     def __init__(self, default_model: str = 'sonar', default_provider: str = 'perplexity'):
         """Initialize the argument parser.
@@ -92,7 +95,9 @@ class ArgumentParser:
         """Extract model flag from arguments.
         
         Looks for model flags (--s, --p, --r, --deep) in the arguments.
+        Case-insensitive matching for common typos (--S, --P, etc.)
         If multiple flags are found, uses the last one and displays a warning.
+        Invalid flags are warned about and ignored.
         
         Args:
             args: List of command-line arguments
@@ -105,21 +110,33 @@ class ArgumentParser:
         found_flags = []
         
         for arg in args:
-            if arg in self.MODEL_FLAGS:
-                model = self.MODEL_FLAGS[arg]
-                found_flags.append(arg)
+            # Case-insensitive matching for model flags
+            arg_lower = arg.lower()
+            
+            if arg_lower in self.MODEL_FLAGS:
+                model = self.MODEL_FLAGS[arg_lower]
+                found_flags.append(arg_lower)
+            # Check if it looks like a model flag but is invalid
+            elif arg.startswith('--') and arg[2:3].isalpha() and len(arg) <= 7:
+                # Might be a typo or invalid model flag
+                if arg_lower not in self.MODEL_FLAGS and arg_lower not in ['--show-sources', '--show-source', '--show-s']:
+                    print(f"⚠ Warning: Unknown flag '{arg}'. Using default model.", file=sys.stderr)
+                    print(f"   Valid model flags: --s, --p, --r, --deep", file=sys.stderr)
+                remaining_args.append(arg)
             else:
                 remaining_args.append(arg)
         
         # Warn if multiple model flags were provided
         if len(found_flags) > 1:
-            print(f"Warning: Multiple model flags provided ({', '.join(found_flags)}). "
+            print(f"⚠ Warning: Multiple model flags provided ({', '.join(found_flags)}). "
                   f"Using the last one: {found_flags[-1]}", file=sys.stderr)
         
         return model, remaining_args
     
     def extract_sources_flag(self, args: list[str]) -> tuple[bool, list[str]]:
         """Extract --show-sources flag from arguments.
+        
+        Supports multiple variations: --show-sources, --show-source, --show-s
         
         Args:
             args: List of command-line arguments
@@ -130,8 +147,11 @@ class ArgumentParser:
         show_sources = False  # Default: hide sources
         remaining_args = []
         
+        # Accepted variations for showing sources
+        source_flags = ['--show-sources', '--show-source', '--show-s']
+        
         for arg in args:
-            if arg == '--show-sources':
+            if arg.lower() in source_flags:
                 show_sources = True
             else:
                 remaining_args.append(arg)

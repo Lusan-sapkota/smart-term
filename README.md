@@ -93,7 +93,8 @@ ai Solve this problem --r          # sonar-reasoning-pro
 
 # Show source citations (hidden by default)
 ai "Research topic" --show-sources # Display clickable source links
-ai "Deep research" --deep --show-sources
+ai "Deep research" --deep --show-s  # Short form works too
+ai "Query" --show-source            # Singular form also works
 
 # Special commands
 ai --bored                         # Better try it yourself
@@ -102,7 +103,9 @@ ai --update                        # Update to latest version
 
 **Pro tips:** 
 - Quotes are optional unless your query has weird shell characters. Live dangerously.
-- Sources are hidden by default because who actually reads those anyway? Use `--show-sources` if you're feeling academic.
+- Sources are hidden by default because who actually reads those anyway? Use `--show-sources` (or `--show-s`) if you're feeling academic.
+- Model flags are case-insensitive. `--S`, `--s`, or even `--P` all work. Typos are forgiven.
+- Invalid model flags? No problem. It'll warn you and use the default model.
 - Model names are color-coded because I got bored: sonar (cyan), sonar-pro (magenta), sonar-reasoning-pro (yellow), sonar-deep-research (blue)
 - Citation numbers are clickable when `--show-sources` is used. Yes, your terminal can do that. Welcome to 2025.
 

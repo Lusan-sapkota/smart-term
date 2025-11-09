@@ -3,6 +3,7 @@
 from rich.console import Console
 from rich.markdown import Markdown
 from rich.panel import Panel
+from rich.text import Text
 from colorama import Fore, Style, init
 
 
@@ -11,7 +12,10 @@ class OutputFormatter:
     
     def __init__(self):
         """Initialize the output formatter with Rich Console and Colorama."""
-        self.console = Console()
+        self.console = Console(
+            soft_wrap=True,  # Enable soft wrapping for better text flow
+            legacy_windows=False  # Better Windows terminal support
+        )
         init(autoreset=True)  # Initialize Colorama with auto-reset
     
     def display_query(self, query: str, file_info: dict | None = None):
@@ -69,13 +73,15 @@ class OutputFormatter:
             else:
                 main_response, citations_section = response.split("__CITATIONS__", 1)
             
-            # Display main response
-            md = Markdown(main_response.strip())
+            # Display main response with proper wrapping
+            md = Markdown(main_response.strip(), code_theme="monokai", inline_code_theme="monokai")
             panel = Panel(
                 md,
                 title=f"[bold {model_color}]Response from {model}[/bold {model_color}]",
                 border_style=model_color,
-                padding=(1, 2)
+                padding=(1, 2),
+                expand=False,
+                width=None  # Auto-adjust to terminal width
             )
             self.console.print(panel)
             
@@ -88,40 +94,44 @@ class OutputFormatter:
                     clickable_citations,
                     title="[bold cyan]📚 Sources[/bold cyan]",
                     border_style="cyan",
-                    padding=(1, 2)
+                    padding=(1, 2),
+                    expand=False,
+                    width=None
                 )
                 self.console.print(citations_panel)
             self.console.print()
         else:
             # No citations, display normally
-            md = Markdown(response)
+            md = Markdown(response, code_theme="monokai", inline_code_theme="monokai")
             panel = Panel(
                 md,
                 title=f"[bold {model_color}]Response from {model}[/bold {model_color}]",
                 border_style=model_color,
-                padding=(1, 2)
+                padding=(1, 2),
+                expand=False,
+                width=None
             )
             self.console.print(panel)
             self.console.print()  # Add spacing after response
     
-    def _make_urls_clickable(self, citations: str) -> str:
+    def _make_urls_clickable(self, citations: str) -> Text:
         """
         Make URLs clickable in terminal with truncated display text.
-        Uses ANSI escape codes for clickable links (OSC 8).
+        Uses Rich Text object for proper formatting and clickable links.
         
         Args:
             citations: Raw citations text with URLs
         
         Returns:
-            Citations with clickable, truncated URLs
+            Rich Text object with clickable, truncated URLs
         """
         import re
         from urllib.parse import urlparse
         
         lines = citations.split('\n')
-        clickable_lines = []
+        text = Text()
         
-        for line in lines:
+        for i, line in enumerate(lines):
             # Skip marker lines
             if line.startswith('__'):
                 continue
@@ -145,21 +155,26 @@ class OutputFormatter:
                         short_url = domain
                     
                     # Limit total length
-                    if len(short_url) > 50:
-                        short_url = short_url[:47] + "..."
+                    if len(short_url) > 60:
+                        short_url = short_url[:57] + "..."
                     
-                    # Create clickable link using OSC 8 escape sequence
-                    # Format: \033]8;;URL\033\\TEXT\033]8;;\033\\
-                    clickable_link = f"\033]8;;{url}\033\\{short_url}\033]8;;\033\\"
-                    clickable_lines.append(f"{number} {clickable_link}")
-                except:
+                    # Add citation number
+                    text.append(f"{number} ", style="bold cyan")
+                    # Add clickable link
+                    text.append(short_url, style=f"link {url}")
+                    
+                except Exception:
                     # If parsing fails, use original
-                    clickable_lines.append(line)
+                    text.append(line)
             else:
                 if line.strip():  # Only add non-empty lines
-                    clickable_lines.append(line)
+                    text.append(line)
+            
+            # Add newline except for last line
+            if i < len(lines) - 1 and line.strip():
+                text.append("\n")
         
-        return '\n'.join(clickable_lines)
+        return text
     
     def display_error(self, error: Exception):
         """
