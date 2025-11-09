@@ -2,8 +2,20 @@
 
 # Smart-term Update Script
 # Updates an existing smart-term installation to the latest version
+# Usage: ./update.sh [--yes|-y]  (skip confirmation)
 
 set -e
+
+# Check for --yes flag
+AUTO_YES=false
+if [[ "$1" == "--yes" ]] || [[ "$1" == "-y" ]]; then
+    AUTO_YES=true
+fi
+
+# If piped (not interactive), auto-confirm
+if [[ ! -t 0 ]]; then
+    AUTO_YES=true
+fi
 
 # Colors for output
 RED='\033[0;31m'
@@ -99,12 +111,16 @@ main() {
     git log --oneline HEAD..origin/main
     echo ""
     
-    # Ask for confirmation (redirect from /dev/tty to handle piped input)
-    read -p "Do you want to update? (y/n): " -n 1 -r </dev/tty
-    echo
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        print_warning "Update cancelled"
-        exit 0
+    # Ask for confirmation (unless auto-confirmed)
+    if [[ "$AUTO_YES" == false ]]; then
+        read -p "Do you want to update? (y/n): " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            print_warning "Update cancelled"
+            exit 0
+        fi
+    else
+        print_info "Auto-updating (piped mode)..."
     fi
     
     # Stash any local changes
