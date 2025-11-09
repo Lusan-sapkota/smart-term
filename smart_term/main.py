@@ -10,6 +10,7 @@ display formatted responses.
 import sys
 import os
 from typing import Optional
+from pathlib import Path
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -192,11 +193,11 @@ def show_bored_content() -> None:
     """Display random dev meme or quote when user is bored."""
     import json
     import random
-    from pathlib import Path
+    from pathlib import Path as PathLib
     
     try:
         # Get the path to bored.json
-        data_file = Path(__file__).parent / "data" / "bored.json"
+        data_file = PathLib(__file__).parent / "data" / "bored.json"
         
         if not data_file.exists():
             print("\n🎭 Boredom file not found. Guess you'll have to be productive instead.\n")
@@ -236,6 +237,19 @@ def main() -> int:
             show_bored_content()
             return 0
         
+        # Check for update command
+        if args and args[0] in ['--update', '-u']:
+            print("\n🔄 Updating smart-term...\n")
+            import subprocess
+            update_script = Path.home() / ".smart-term" / "update.sh"
+            if update_script.exists():
+                result = subprocess.run(['bash', str(update_script)])
+                return result.returncode
+            else:
+                print("Update script not found. Please run:")
+                print("  curl -fsSL https://raw.githubusercontent.com/Lusan-sapkota/smart-term/main/update.sh | bash")
+                return 1
+        
         # Check if no arguments provided
         if not args:
             print("Smart-term AI CLI Tool")
@@ -250,8 +264,9 @@ def main() -> int:
             print("  ai document.pdf 'Summarize this document' --p")
             print("  ai ~/code/script.py 'Explain this code' --r")
             print("  ai image.png 'What is in this image?'")
-            print("\nEaster egg:")
-            print("  ai --bored   When you need a break")
+            print("\nSpecial commands:")
+            print("  ai --bored    When you need a break")
+            print("  ai --update   Update to the latest version")
             return 1
         
         # Execute the query

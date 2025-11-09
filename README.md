@@ -1,10 +1,19 @@
 # Smart-term
 
+[![License](https://img.shields.io/github/license/Lusan-sapkota/smart-term)](https://github.com/Lusan-sapkota/smart-term/blob/main/LICENSE)
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
+[![Built With](https://img.shields.io/badge/built%20with-boredom-orange)](https://github.com/Lusan-sapkota/smart-term)
+[![Powered By](https://img.shields.io/badge/powered%20by-perplexity-purple)](https://www.perplexity.ai/)
+
 > Smart-term? Yeah, the name sounded weird to me too, but here we are.
 
 > The little brother of [Smart-Shell](https://github.com/Lusan-sapkota/smart-shell) - because my Perplexity API subscription was gathering dust and I was bored.
 
 An AI-powered terminal assistant that actually works. Ask questions, analyze files, get instant answers - all from your command line.
+
+## Demo
+
+*Demo recording coming soon. For now, just install it and see the magic yourself.*
 
 ## Why This Exists
 
@@ -39,32 +48,55 @@ chmod +x install.sh
 ./install.sh
 ```
 
+### Updating
+
+Already have smart-term installed? Update to the latest version:
+
+```bash
+# Easiest way
+ai --update
+
+# Or via curl
+curl -fsSL https://raw.githubusercontent.com/Lusan-sapkota/smart-term/main/update.sh | bash
+
+# Or manually
+cd ~/.smart-term
+git pull origin main
+source venv/bin/activate
+pip install -e .
+```
+
 ## Usage
 
 ```bash
-# Ask anything
+# Ask anything (quotes optional for simple queries)
 ai "What is the capital of France?"
+ai What is the capital of France?
 
 # Analyze files
 ai document.pdf "Summarize this"
+ai document.pdf Summarize this
 ai image.png "What's in this image?"
 ai script.py "Explain this code"
 
-# Use different models
+# Use different models (flags work anywhere)
 ai "Complex question" --p          # sonar-pro (enhanced reasoning)
-ai "Deep research topic" --deep    # sonar-deep-research
+ai What is quantum computing --deep # sonar-deep-research
 ai "Quick question" --s            # sonar (default, fast)
-ai "Hard problem" --r              # sonar-reasoning-pro
+ai Solve this problem --r          # sonar-reasoning-pro
 
 # When you're bored (easter egg)
 ai --bored                         # Random dev meme or quote
 ```
 
+**Pro tip:** Quotes are only needed if your query has special shell characters. Otherwise, just type naturally!
+
 ## Features
 
 - **File Support**: PDFs, images (PNG, JPG, JPEG), text files, code files
 - **Multiple Models**: Choose based on your needs (speed vs depth)
-- **Rich Output**: Syntax-highlighted, formatted responses
+- **Rich Output**: Syntax-highlighted, formatted responses with source citations
+- **Source Citations**: Automatically displays source URLs from Perplexity responses
 - **Thinking Animation**: See when the AI is working (disable in config if you prefer silence)
 - **Configurable**: Customize everything via `~/.ai_cli_config.json`
 - **Easter Egg**: `ai --bored` for when you need a break (dev memes and quotes)

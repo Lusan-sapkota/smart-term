@@ -138,9 +138,20 @@ class PerplexityProvider(AIProvider):
             # Parse the response
             data = response.json()
             
-            # Extract the response text from the API response
+            # Extract the response text and citations from the API response
             if 'choices' in data and len(data['choices']) > 0:
-                return data['choices'][0]['message']['content']
+                content = data['choices'][0]['message']['content']
+                
+                # Check if citations are available
+                citations = data.get('citations', [])
+                
+                # If citations exist, append them to the response
+                if citations:
+                    content += "\n\n__CITATIONS__\n"
+                    for idx, citation in enumerate(citations, 1):
+                        content += f"[{idx}] {citation}\n"
+                
+                return content
             else:
                 raise APIError("Unexpected API response format")
                 

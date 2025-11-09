@@ -39,22 +39,43 @@ class OutputFormatter:
         Render the AI response with markdown formatting in a Rich Panel.
         
         Args:
-            response: The AI model's response text
+            response: The AI model's response text (may include citations)
             model: The name of the model that generated the response
         """
-        # Create markdown object from response
-        md = Markdown(response)
-        
-        # Display in a panel with model name in title
-        panel = Panel(
-            md,
-            title=f"[bold green]Response from {model}[/bold green]",
-            border_style="green",
-            padding=(1, 2)
-        )
-        
-        self.console.print(panel)
-        self.console.print()  # Add spacing after response
+        # Check if response contains citations
+        if "__CITATIONS__" in response:
+            main_response, citations_section = response.split("__CITATIONS__", 1)
+            
+            # Display main response
+            md = Markdown(main_response.strip())
+            panel = Panel(
+                md,
+                title=f"[bold green]Response from {model}[/bold green]",
+                border_style="green",
+                padding=(1, 2)
+            )
+            self.console.print(panel)
+            
+            # Display citations in a separate panel
+            citations_panel = Panel(
+                citations_section.strip(),
+                title="[bold cyan]📚 Sources[/bold cyan]",
+                border_style="cyan",
+                padding=(1, 2)
+            )
+            self.console.print(citations_panel)
+            self.console.print()
+        else:
+            # No citations, display normally
+            md = Markdown(response)
+            panel = Panel(
+                md,
+                title=f"[bold green]Response from {model}[/bold green]",
+                border_style="green",
+                padding=(1, 2)
+            )
+            self.console.print(panel)
+            self.console.print()  # Add spacing after response
     
     def display_error(self, error: Exception):
         """
