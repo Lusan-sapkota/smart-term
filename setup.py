@@ -12,10 +12,11 @@ setup(
     name="smart-term",
     version="0.1.0",
     author="Lusan Sapkota",
+    author_email="sapkotalusan@gmail.com",
     description="AI-powered terminal assistant CLI tool",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/Lusan-sapkota/smart-term.git",
+    url="https://github.com/Lusan-sapkota/smart-term",
     packages=find_packages(),
     classifiers=[
         "Development Status :: 3 - Alpha",

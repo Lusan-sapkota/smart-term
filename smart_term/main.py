@@ -10,6 +10,10 @@ display formatted responses.
 import sys
 import os
 from typing import Optional
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 from smart_term.config.loader import ConfigLoader
 from smart_term.cli.parser import ArgumentParser
@@ -127,19 +131,29 @@ def execute_query(args: list[str]) -> int:
         show_spinner = config.get('show_thinking_animation', True)
         response = None
         
+        # Convert FileContent to dict if present
+        file_content_dict = None
+        if file_content:
+            file_content_dict = {
+                'type': file_content.type,
+                'content': file_content.content,
+                'metadata': file_content.metadata,
+                'file_path': file_content.file_path
+            }
+        
         try:
             if show_spinner:
                 with ThinkingSpinner("Thinking..."):
                     response = provider.send_query(
                         query=parsed_args.query,
                         model=parsed_args.model,
-                        file_content=file_content
+                        file_content=file_content_dict
                     )
             else:
                 response = provider.send_query(
                     query=parsed_args.query,
                     model=parsed_args.model,
-                    file_content=file_content
+                    file_content=file_content_dict
                 )
             
             logger.info("Query completed successfully")

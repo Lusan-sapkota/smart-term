@@ -1,0 +1,60 @@
+{
+  "_comment": "Smart-term Configuration File",
+  "_description": "This file should be placed at ~/.ai_cli_config.json",
+  "_note": "All fields are optional. If not specified, defaults will be used.",
+  
+  "default_model": "sonar",
+  "_default_model_options": [
+    "sonar - Fast, general-purpose model",
+    "sonar-pro - Enhanced reasoning capabilities",
+    "sonar-reasoning-pro - Advanced reasoning for complex queries",
+    "sonar-deep-research - Deep research and analysis"
+  ],
+  
+  "default_provider": "perplexity",
+  "_default_provider_note": "Currently only 'perplexity' is supported. Future: gemini, local",
+  
+  "timeout": 30,
+  "_timeout_description": "API request timeout in seconds (default: 30)",
+  
+  "max_file_size_mb": 10,
+  "_max_file_size_mb_description": "Maximum file size for attachments in MB (default: 10)",
+  
+  "output_format": "markdown",
+  "_output_format_options": [
+    "markdown - Rich formatted output with syntax highlighting (default)",
+    "plain - Simple text output without formatting"
+  ],
+  
+  "show_thinking_animation": true,
+  "_show_thinking_animation_description": "Display animated spinner while waiting for API response (default: true)",
+  
+  "log_level": "INFO",
+  "_log_level_options": [
+    "DEBUG - Detailed debugging information",
+    "INFO - General operational messages (default)",
+    "WARNING - Warning messages only",
+    "ERROR - Error messages only",
+    "CRITICAL - Critical errors only"
+  ],
+  
+  "_examples": {
+    "minimal_config": {
+      "default_model": "sonar-pro"
+    },
+    "performance_focused": {
+      "default_model": "sonar",
+      "timeout": 15,
+      "show_thinking_animation": false
+    },
+    "research_focused": {
+      "default_model": "sonar-deep-research",
+      "timeout": 60,
+      "max_file_size_mb": 20
+    },
+    "debugging_config": {
+      "log_level": "DEBUG",
+      "timeout": 60
+    }
+  }
+}
