@@ -188,6 +188,35 @@ def execute_query(args: list[str]) -> int:
         return 1
 
 
+def show_bored_content() -> None:
+    """Display random dev meme or quote when user is bored."""
+    import json
+    import random
+    from pathlib import Path
+    
+    try:
+        # Get the path to bored.json
+        data_file = Path(__file__).parent / "data" / "bored.json"
+        
+        if not data_file.exists():
+            print("\n🎭 Boredom file not found. Guess you'll have to be productive instead.\n")
+            return
+        
+        with open(data_file, 'r') as f:
+            data = json.load(f)
+        
+        # Randomly choose between meme or quote
+        if random.choice([True, False]):
+            content = random.choice(data['memes'])
+            print(f"\n💭 {content}\n")
+        else:
+            content = random.choice(data['quotes'])
+            print(f"\n📜 {content}\n")
+    
+    except Exception as e:
+        print(f"\n🤷 Even the boredom feature is broken. That's meta.\n")
+
+
 def main() -> int:
     """
     Main entry point for the Smart-term CLI tool.
@@ -201,6 +230,11 @@ def main() -> int:
     try:
         # Get arguments (excluding program name)
         args = sys.argv[1:]
+        
+        # Check for easter egg
+        if args and args[0] in ['--bored', '-b']:
+            show_bored_content()
+            return 0
         
         # Check if no arguments provided
         if not args:
@@ -216,6 +250,8 @@ def main() -> int:
             print("  ai document.pdf 'Summarize this document' --p")
             print("  ai ~/code/script.py 'Explain this code' --r")
             print("  ai image.png 'What is in this image?'")
+            print("\nEaster egg:")
+            print("  ai --bored   When you need a break")
             return 1
         
         # Execute the query

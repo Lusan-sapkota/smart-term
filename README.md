@@ -26,6 +26,17 @@ The installer will:
 
 Get your free API key at: [perplexity.ai/settings/api](https://www.perplexity.ai/settings/api)
 
+### Manual Installation
+
+If you prefer to clone and install manually:
+
+```bash
+git clone https://github.com/Lusan-sapkota/smart-term.git
+cd smart-term
+chmod +x install.sh
+./install.sh
+```
+
 ## Usage
 
 ```bash
@@ -42,6 +53,9 @@ ai "Complex question" --p          # sonar-pro (enhanced reasoning)
 ai "Deep research topic" --deep    # sonar-deep-research
 ai "Quick question" --s            # sonar (default, fast)
 ai "Hard problem" --r              # sonar-reasoning-pro
+
+# When you're bored (easter egg)
+ai --bored                         # Random dev meme or quote
 ```
 
 ## Features
@@ -51,6 +65,7 @@ ai "Hard problem" --r              # sonar-reasoning-pro
 - **Rich Output**: Syntax-highlighted, formatted responses
 - **Thinking Animation**: See when the AI is working (disable in config if you prefer silence)
 - **Configurable**: Customize everything via `~/.ai_cli_config.json`
+- **Easter Egg**: `ai --bored` for when you need a break (dev memes and quotes)
 
 ## Configuration
 
