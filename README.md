@@ -85,8 +85,9 @@ ai What is quantum computing --deep # sonar-deep-research
 ai "Quick question" --s            # sonar (default, fast)
 ai Solve this problem --r          # sonar-reasoning-pro
 
-# When you're bored (easter egg)
-ai --bored                         # Random dev meme or quote
+# Special commands
+ai --bored                         # Better try it yourself
+ai --update                        # Update to latest version
 ```
 
 **Pro tip:** Quotes are only needed if your query has special shell characters. Otherwise, just type naturally!
