@@ -142,20 +142,30 @@ class PerplexityProvider(AIProvider):
             if 'choices' in data and len(data['choices']) > 0:
                 content = data['choices'][0]['message']['content']
                 
-                # Remove citation numbers from the main text [1][2][3] etc.
-                import re
-                content = re.sub(r'\[\d+\]', '', content)
-                
                 # Check if citations are available
                 citations = data.get('citations', [])
                 
-                # If citations exist, append them to the response
-                if citations:
-                    content += "\n\n__CITATIONS__\n"
-                    for idx, citation in enumerate(citations, 1):
-                        content += f"[{idx}] {citation}\n"
+                # Store original content with citation numbers
+                content_with_citations = content
                 
-                return content
+                # Remove citation numbers from the main text [1][2][3] etc. by default
+                import re
+                content_clean = re.sub(r'\[\d+\]', '', content)
+                
+                # If citations exist, append them with both versions
+                if citations:
+                    # Store both versions: clean and with citations
+                    content_clean += "\n\n__CITATIONS__\n"
+                    content_with_citations += "\n\n__CITATIONS__\n"
+                    
+                    for idx, citation in enumerate(citations, 1):
+                        content_clean += f"[{idx}] {citation}\n"
+                        content_with_citations += f"[{idx}] {citation}\n"
+                    
+                    # Add marker to indicate we have both versions
+                    content_clean += "__WITH_CITATIONS__\n" + content_with_citations
+                
+                return content_clean
             else:
                 raise APIError("Unexpected API response format")
                 

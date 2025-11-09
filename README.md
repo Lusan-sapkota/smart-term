@@ -7,39 +7,45 @@
 
 > Smart-term? Yeah, the name sounded weird to me too, but here we are.
 
-> The little brother of [Smart-Shell](https://github.com/Lusan-sapkota/smart-shell) - because my Perplexity API subscription was gathering dust and I was bored.
+> The little brother of [Smart-Shell](https://github.com/Lusan-sapkota/smart-shell) - born from a deadly combination of boredom and an unused Perplexity API subscription.
 
-An AI-powered terminal assistant that actually works. Ask questions, analyze files, get instant answers - all from your command line.
+An AI-powered terminal assistant that actually works. Ask questions, analyze files, get instant answers - all without leaving your terminal (because who needs a browser anyway?).
 
 ## Demo
 
-*Demo recording coming soon. For now, just install it and see the magic yourself.*
+*Demo recording coming soon (I won't upload it!). For now, just trust me bro - it works.*
 
 ## Why This Exists
 
-My Perplexity API was going to waste. I got bored. This happened.
+My Perplexity API was sitting there, judging me for not using it. I got bored one weekend. This is what happened.
 
-Now you can ask your terminal anything and it'll answer back. It's like having a really smart friend who never sleeps and doesn't judge your 3 AM coding questions.
+Now you can ask your terminal anything and it'll answer back. It's like having a really smart friend who:
+- Never sleeps
+- Never judges your 3 AM "how do I exit vim" questions
+- Doesn't ask why you're still debugging at 4 AM
+- Won't tell anyone about your Stack Overflow addiction
 
 ## Installation
 
-One line. That's it.
+One line. That's literally it. No npm hell, no dependency nightmares, no "works on my machine" excuses.
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Lusan-sapkota/smart-term/main/install.sh | bash
 ```
 
 The installer will:
-- Install dependencies (if needed)
-- Set up the `ai` command globally
-- Ask for your Perplexity API key
-- Get out of your way
+- Install dependencies (if you don't have them)
+- Set up the `ai` command globally (because typing is hard)
+- Ask for your Perplexity API key (politely)
+- Get out of your way (unlike most installers)
 
 Get your free API key at: [perplexity.ai/settings/api](https://www.perplexity.ai/settings/api)
 
+*Yes, it's free. No, there's no catch. Yes, I'm as surprised as you are.*
+
 ### Manual Installation
 
-If you prefer to clone and install manually:
+If you're the "I don't trust curl | bash" type (respect):
 
 ```bash
 git clone https://github.com/Lusan-sapkota/smart-term.git
@@ -85,9 +91,9 @@ ai What is quantum computing --deep # sonar-deep-research
 ai "Quick question" --s            # sonar (default, fast)
 ai Solve this problem --r          # sonar-reasoning-pro
 
-# Hide source citations
-ai "Quick query" --no-sources      # Clean output without sources
-ai "Research topic" --deep --no-sources
+# Show source citations (hidden by default)
+ai "Research topic" --show-sources # Display clickable source links
+ai "Deep research" --deep --show-sources
 
 # Special commands
 ai --bored                         # Better try it yourself
@@ -95,23 +101,25 @@ ai --update                        # Update to latest version
 ```
 
 **Pro tips:** 
-- Quotes are only needed if your query has special shell characters. Otherwise, just type naturally!
-- Use `--no-sources` to hide citations for cleaner output or when piping to other commands
-- Model names are color-coded: sonar (cyan), sonar-pro (magenta), sonar-reasoning-pro (yellow), sonar-deep-research (blue)
+- Quotes are optional unless your query has weird shell characters. Live dangerously.
+- Sources are hidden by default because who actually reads those anyway? Use `--show-sources` if you're feeling academic.
+- Model names are color-coded because I got bored: sonar (cyan), sonar-pro (magenta), sonar-reasoning-pro (yellow), sonar-deep-research (blue)
+- Citation numbers are clickable when `--show-sources` is used. Yes, your terminal can do that. Welcome to 2025.
 
 ## Features
 
-- **File Support**: PDFs, images (PNG, JPG, JPEG), text files, code files
-- **Multiple Models**: Choose based on your needs (speed vs depth)
-- **Rich Output**: Syntax-highlighted, formatted responses with source citations
-- **Source Citations**: Automatically displays source URLs from Perplexity responses
-- **Thinking Animation**: See when the AI is working (disable in config if you prefer silence)
-- **Configurable**: Customize everything via `~/.ai_cli_config.json`
-- **Easter Egg**: `ai --bored` for when you need a break (dev memes and quotes)
+- **File Support**: PDFs, images, text files, code - throw whatever at it
+- **Multiple Models**: From "quick answer" to "write my thesis" levels of depth
+- **Rich Output**: Syntax-highlighted, color-coded, prettier than your ex
+- **Source Citations**: Optional clickable URLs (for when you need to look smart)
+- **Clean by Default**: No citation spam unless you ask for it
+- **Thinking Animation**: A spinner that says "I'm working, I promise"
+- **Configurable**: Tweak everything in `~/.ai_cli_config.json` (if you're into that)
+- **Easter Egg**: `ai --bored` for when you need a break (100+ dev memes and quotes)
 
 ## Configuration
 
-Config lives at `~/.ai_cli_config.json`. Edit it to your liking:
+Config lives at `~/.ai_cli_config.json`. Tweak it if the defaults aren't your vibe:
 
 ```json
 {
@@ -125,20 +133,22 @@ Config lives at `~/.ai_cli_config.json`. Edit it to your liking:
 }
 ```
 
-See `docs/example_config.json` for all options and examples.
+See `docs/example_config.json` for all options and examples. Or don't. The defaults are pretty good.
 
 ## Models
 
+Pick your poison:
+
 | Flag | Model | Best For |
 |------|-------|----------|
-| `--s` | sonar | Quick questions, general use (default) |
-| `--p` | sonar-pro | Enhanced reasoning, better answers |
-| `--r` | sonar-reasoning-pro | Complex problems, deep thinking |
-| `--deep` | sonar-deep-research | Research, comprehensive analysis |
+| `--s` | sonar | Quick questions, "what's for dinner" level stuff (default) |
+| `--p` | sonar-pro | When you need actual brain power |
+| `--r` | sonar-reasoning-pro | Complex problems, existential crises |
+| `--deep` | sonar-deep-research | PhD-level research, or when you're really procrastinating |
 
 ## API Key Setup
 
-During installation, you'll be prompted for your API key. If you skip it:
+During installation, you'll be prompted for your API key. If you chickened out:
 
 ```bash
 # Add to ~/.bashrc or ~/.zshrc
@@ -148,15 +158,24 @@ export PERPLEXITY_API_KEY='your-api-key-here'
 echo "PERPLEXITY_API_KEY=your-api-key-here" > ~/.smart-term/.env
 ```
 
+Then restart your terminal. Or don't, and wonder why it doesn't work.
+
 ## Requirements
 
-- Python 3.10+
-- Internet connection
-- Perplexity API key (free tier available)
+- Python 3.10+ (if you're still on 2.7, we need to talk)
+- Internet connection (obviously)
+- Perplexity API key (free tier available, no credit card required)
+- A terminal (you're a developer, you have one)
 
 ## Other Providers?
 
-Currently only Perplexity is supported because that's what I'm paying for. Want Gemini, Claude, or something else? Open an issue. I'll probably add Gemini support when my Perplexity subscription ends (or when I get bored again).
+Currently only Perplexity is supported because that's what I'm paying for. 
+
+Want Gemini, Claude, or something else? Open an issue. I'll probably add Gemini support when:
+- My Perplexity subscription ends
+- I get bored again (likely)
+- Someone asks nicely (very likely)
+- I procrastinate on actual work (extremely likely)
 
 ## Development
 
@@ -192,7 +211,7 @@ smart-term/
 
 ## Contributing
 
-Found a bug? Want a feature? Open an issue or PR. I'm friendly.
+Found a bug? Want a feature? Open an issue or PR. I promise I'm friendly (and I actually read them).
 
 ## License
 
@@ -208,12 +227,31 @@ MIT License - do whatever you want with it.
 
 ## Related Projects
 
-- [Smart-Shell](https://github.com/Lusan-sapkota/smart-shell) - The big brother. More features, more complexity.
+- [Smart-Shell](https://github.com/Lusan-sapkota/smart-shell) - The big brother. More features, more complexity, more "why did I build this?"
 
 ## Acknowledgments
 
-Thanks to Perplexity for the API that was going to waste anyway.
+Thanks to:
+- Perplexity for the API that was gathering dust
+- Boredom, my most productive state
+- Coffee, the real MVP
+- Stack Overflow, for obvious reasons
+- That one person who will actually read this entire README
+
+## FAQ
+
+**Q: Why did you build this?**  
+A: Boredom + unused API subscription = this
+
+**Q: Is it production-ready?**  
+A: Define "production"
+
+**Q: Can I use this for my startup?**  
+A: Sure, but don't blame me when your investors ask questions
+
+**Q: Why is it called Smart-term?**  
+A: I was tired when I named it. Don't judge.
 
 ---
 
-Made with boredom and a Perplexity subscription.
+Made with boredom, a Perplexity subscription, and questionable life choices.

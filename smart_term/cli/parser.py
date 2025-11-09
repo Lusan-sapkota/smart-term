@@ -119,7 +119,7 @@ class ArgumentParser:
         return model, remaining_args
     
     def extract_sources_flag(self, args: list[str]) -> tuple[bool, list[str]]:
-        """Extract --no-sources flag from arguments.
+        """Extract --show-sources flag from arguments.
         
         Args:
             args: List of command-line arguments
@@ -127,12 +127,12 @@ class ArgumentParser:
         Returns:
             Tuple of (show_sources boolean, remaining_args without flag)
         """
-        show_sources = True  # Default: show sources
+        show_sources = False  # Default: hide sources
         remaining_args = []
         
         for arg in args:
-            if arg == '--no-sources':
-                show_sources = False
+            if arg == '--show-sources':
+                show_sources = True
             else:
                 remaining_args.append(arg)
         

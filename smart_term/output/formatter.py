@@ -34,14 +34,14 @@ class OutputFormatter:
         
         self.console.print()  # Add spacing
     
-    def display_response(self, response: str, model: str, show_sources: bool = True):
+    def display_response(self, response: str, model: str, show_sources: bool = False):
         """
         Render the AI response with markdown formatting in a Rich Panel.
         
         Args:
             response: The AI model's response text (may include citations)
             model: The name of the model that generated the response
-            show_sources: Whether to display source citations
+            show_sources: Whether to display source citations (default: False)
         """
         # Model name color mapping for visual distinction
         model_colors = {
@@ -54,7 +54,20 @@ class OutputFormatter:
         
         # Check if response contains citations
         if "__CITATIONS__" in response:
-            main_response, citations_section = response.split("__CITATIONS__", 1)
+            # Check if we have both versions
+            if "__WITH_CITATIONS__" in response:
+                parts = response.split("__WITH_CITATIONS__")
+                clean_part = parts[0]
+                with_citations_part = parts[1] if len(parts) > 1 else clean_part
+                
+                if show_sources:
+                    # Use version with citation numbers in text
+                    main_response, citations_section = with_citations_part.split("__CITATIONS__", 1)
+                else:
+                    # Use clean version without citation numbers
+                    main_response, citations_section = clean_part.split("__CITATIONS__", 1)
+            else:
+                main_response, citations_section = response.split("__CITATIONS__", 1)
             
             # Display main response
             md = Markdown(main_response.strip())
@@ -68,11 +81,11 @@ class OutputFormatter:
             
             # Display citations only if show_sources is True
             if show_sources:
-                # Truncate long URLs in citations
-                truncated_citations = self._truncate_urls(citations_section.strip())
+                # Make URLs clickable with truncated display
+                clickable_citations = self._make_urls_clickable(citations_section.strip())
                 
                 citations_panel = Panel(
-                    truncated_citations,
+                    clickable_citations,
                     title="[bold cyan]📚 Sources[/bold cyan]",
                     border_style="cyan",
                     padding=(1, 2)
@@ -91,23 +104,28 @@ class OutputFormatter:
             self.console.print(panel)
             self.console.print()  # Add spacing after response
     
-    def _truncate_urls(self, citations: str) -> str:
+    def _make_urls_clickable(self, citations: str) -> str:
         """
-        Truncate long URLs in citations to show only domain and path.
+        Make URLs clickable in terminal with truncated display text.
+        Uses ANSI escape codes for clickable links (OSC 8).
         
         Args:
             citations: Raw citations text with URLs
         
         Returns:
-            Citations with truncated URLs
+            Citations with clickable, truncated URLs
         """
         import re
         from urllib.parse import urlparse
         
         lines = citations.split('\n')
-        truncated_lines = []
+        clickable_lines = []
         
         for line in lines:
+            # Skip marker lines
+            if line.startswith('__'):
+                continue
+                
             # Match pattern like "[1] https://..."
             match = re.match(r'(\[\d+\])\s+(https?://[^\s]+)', line)
             if match:
@@ -117,7 +135,8 @@ class OutputFormatter:
                     # Get domain without www
                     domain = parsed.netloc.replace('www.', '')
                     # Get first part of path (if exists)
-                    path = parsed.path.split('/')[1] if len(parsed.path.split('/')) > 1 else ''
+                    path_parts = [p for p in parsed.path.split('/') if p]
+                    path = path_parts[0] if path_parts else ''
                     
                     # Create shortened display
                     if path:
@@ -129,14 +148,18 @@ class OutputFormatter:
                     if len(short_url) > 50:
                         short_url = short_url[:47] + "..."
                     
-                    truncated_lines.append(f"{number} {short_url}")
+                    # Create clickable link using OSC 8 escape sequence
+                    # Format: \033]8;;URL\033\\TEXT\033]8;;\033\\
+                    clickable_link = f"\033]8;;{url}\033\\{short_url}\033]8;;\033\\"
+                    clickable_lines.append(f"{number} {clickable_link}")
                 except:
                     # If parsing fails, use original
-                    truncated_lines.append(line)
+                    clickable_lines.append(line)
             else:
-                truncated_lines.append(line)
+                if line.strip():  # Only add non-empty lines
+                    clickable_lines.append(line)
         
-        return '\n'.join(truncated_lines)
+        return '\n'.join(clickable_lines)
     
     def display_error(self, error: Exception):
         """
